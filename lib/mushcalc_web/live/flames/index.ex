@@ -73,7 +73,6 @@ defmodule MushcalcWeb.FlamesLive.Index do
 
   @impl true
   def mount(%{"user_id" => uid}, _, socket) do
-    IO.inspect(uid)
     saved_data = Persistence.get_page_data(uid, "flames")
 
     {:ok,
@@ -87,7 +86,7 @@ defmodule MushcalcWeb.FlamesLive.Index do
   def mount(_, _, socket) do
     {:ok,
      socket
-     |> push_navigate(to: "/flames?user_id=#{Ecto.UUID.bingenerate()}")}
+     |> push_navigate(to: "/flames?user_id=#{Ecto.UUID.generate()}")}
   end
 
   @impl true
