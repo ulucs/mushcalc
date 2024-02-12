@@ -50,7 +50,7 @@ defmodule MushcalcWeb.FlamesLive.Index do
 
   defp deserialize_assigns(data) do
     %{
-      equivs: data["equivs"] || @base_equivs,
+      equivs: Enum.to_list(data["equivs"] || @base_equivs),
       equips:
         Enum.map(data["equips"] || [], fn equip ->
           Map.update(
@@ -68,7 +68,7 @@ defmodule MushcalcWeb.FlamesLive.Index do
   end
 
   defp serialize_assigns(assigns) do
-    %{"equivs" => assigns.equivs, "equips" => assigns.equips}
+    %{"equivs" => Map.new(assigns.equivs), "equips" => assigns.equips}
   end
 
   @impl true

@@ -18,15 +18,17 @@ defmodule Mushcalc.Flames.Scores do
     |> Stream.map(fn %{stats: stats, prob: prob} ->
       {calc_score(char_eqs, stats), prob}
     end)
-    |> Enum.group_by(fn {score, _} -> score end, fn {_, prob} -> prob end)
-    |> Enum.map(fn {score, probs} ->
+    |> Enum.reduce(%{}, fn {score, prob}, acc ->
+      Map.update(acc, score, prob, &(&1 + prob))
+    end)
+    |> Enum.map(fn {score, prob} ->
       Pdf.map_attrs(%{
         item_type: item_type,
         item_level: item_level,
         char_eqs: char_eqs,
         method: method,
         score: score,
-        probability: Enum.sum(probs)
+        probability: prob
       })
     end)
   end

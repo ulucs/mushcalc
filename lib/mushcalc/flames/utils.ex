@@ -1,7 +1,7 @@
 defmodule Mushcalc.Flames.Utils do
   def calc_score(char_eqs, flame_stats) do
     Enum.reduce(char_eqs, 0, fn {stat, mult}, acc ->
-      acc + Map.get(flame_stats, stat, 0) * (mult || 0)
+      acc + (Map.get(flame_stats, stat, 0) || 0) * (mult || 0)
     end)
   end
 
