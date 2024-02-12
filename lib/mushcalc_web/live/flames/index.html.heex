@@ -1,0 +1,45 @@
+
+
+<main :if={@user_id} class="grid grid-cols-3 gap-4 items-start">
+  <div class="col-span-3 flex justify-between  items-end">
+    <div class="flex flex-col gap-4">
+      <.header>
+        Flame Calculator
+      </.header>
+      <p>
+        This tool tries to answer "what should I flame next?". After entering
+        your equipments' flames, it will show you:
+      </p>
+      <ol class="list-decimal ml-6">
+        <li>How probable it is for you to roll a better flame</li>
+        <li>What is the expected new score after rolling the new flame</li>
+        <li>A measure for return on investment on number of flames used</li>
+      </ol>
+      <p>
+        It might take a while to load analytics if your stat equivalences and item levels are new,
+        but you (and everyone else) will get results faster after the first run.
+      </p>
+      <p>
+        Your data is saved with a user id (seen in the url), so you can keep the url
+        or bookmark it to come back to your data later.
+        <a class="underline text-zinc-700 font-semibold" href="/flames">
+          Click to get a new start with a new user id.
+        </a>
+      </p>
+    </div>
+
+    <.card title="Flame Type">
+      <form phx-change="set_flame">
+        <.input type="select" name="flame" options={@method_opts} value={to_string(@method)} />
+      </form>
+    </.card>
+  </div>
+
+  <.live_component
+    module={Character.Equivalences} equivs={@equivs} id="equivs" />
+
+  <div class="col-span-2">
+  <.live_component
+    module={FlamesLive.Equipment} equivs={@equivs} equips={@equips} id="eqs" />
+  </div>
+</main>
