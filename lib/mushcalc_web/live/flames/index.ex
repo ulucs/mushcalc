@@ -15,7 +15,11 @@ defmodule MushcalcWeb.FlamesLive.Index do
 
   @method_opts [
     "Eternal / Rainbow": "eternal",
-    "Powerful / Red": "powerful"
+    "Powerful / Red": "powerful",
+    "Dropped Item": "drop",
+    Fusion: "fusion",
+    "Master Fusion": "master_fusion",
+    "Meister Fusion": "meister_fusion"
   ]
 
   defp with_results(equip, equiv, method) do
@@ -26,19 +30,13 @@ defmodule MushcalcWeb.FlamesLive.Index do
         %{
           type: :armor,
           level: equip["level"],
-          score: calc_score(equiv, equip)
+          score: calc_score(equiv, equip),
+          advantage: equip["advantage"]
         },
         Map.new(equiv),
         method
       )
     )
-  end
-
-  defp parse_flame(flame) do
-    case flame do
-      "eternal" -> :eternal
-      "powerful" -> :powerful
-    end
   end
 
   defp debounce_recalc(socket) do
@@ -53,16 +51,9 @@ defmodule MushcalcWeb.FlamesLive.Index do
       equivs: Enum.to_list(data["equivs"] || @base_equivs),
       equips:
         Enum.map(data["equips"] || [], fn equip ->
-          Map.update(
-            equip,
-            "results",
-            nil,
-            &%{
-              probability: &1["probability"],
-              roi: &1["roi"],
-              expected_score: &1["expected_score"]
-            }
-          )
+          equip
+          |> Map.put_new("advantage", true)
+          |> Map.drop(["results"])
         end)
     }
   end
@@ -80,7 +71,8 @@ defmodule MushcalcWeb.FlamesLive.Index do
      |> assign(:user_id, uid)
      |> assign(:method, :eternal)
      |> assign(:method_opts, @method_opts)
-     |> assign(deserialize_assigns(saved_data || %{}))}
+     |> assign(deserialize_assigns(saved_data || %{}))
+     |> debounce_recalc()}
   end
 
   def mount(_, _, socket) do
@@ -93,7 +85,7 @@ defmodule MushcalcWeb.FlamesLive.Index do
   def handle_event("set_flame", params, socket) do
     {:noreply,
      socket
-     |> assign(:method, parse_flame(params["flame"]))
+     |> assign(:method, String.to_atom(params["flame"]))
      |> update(:equips, fn eqs -> Enum.map(eqs, &Map.drop(&1, ["results", "roi"])) end)
      |> debounce_recalc()}
   end

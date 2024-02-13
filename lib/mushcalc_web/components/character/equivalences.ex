@@ -37,25 +37,31 @@ defmodule MushcalcWeb.Character.Equivalences do
      )}
   end
 
+  def send_equivs(socket) do
+    send(self(), {:equivs_change, list_to_eqs(socket.assigns.equivs)})
+    socket
+  end
+
   @impl true
   def handle_event("add_char_eq_stat", _, socket) do
     {:noreply, update(socket, :equivs, &List.insert_at(&1, -1, @eq_list_item))}
   end
 
+  def handle_event("remove_char_eq_stat", params, socket) do
+    {:noreply, socket |> update(:equivs, &List.delete_at(&1, params["ix"])) |> send_equivs()}
+  end
+
   def handle_event("stat_change", params, socket) do
     with {value, _} <- Float.parse(params["value"]) do
-      socket =
-        update(
-          socket,
-          :equivs,
-          &List.update_at(&1, String.to_integer(params["nrow"]), fn _ ->
-            %{"stat" => params["stat"], "value" => value} |> IO.inspect()
-          end)
-        )
-
-      send(self(), {:equivs_change, list_to_eqs(socket.assigns.equivs)})
-
-      {:noreply, socket}
+      {:noreply,
+       socket
+       |> update(
+         :equivs,
+         &List.update_at(&1, String.to_integer(params["nrow"]), fn _ ->
+           %{"stat" => params["stat"], "value" => value}
+         end)
+       )
+       |> send_equivs()}
     else
       _ -> {:noreply, socket}
     end
@@ -83,6 +89,14 @@ defmodule MushcalcWeb.Character.Equivalences do
           <:col :let={{stat, n}}>
             <.input type="number" name="value" id={"value_#{n}"} field={stat[:value]} min={0} />
           </:col>
+          <:action :let={{_, n}}>
+            <span
+              class="text-red-500 cursor-pointer hover:underline"
+              phx-click={JS.push("remove_char_eq_stat", value: %{ix: n}, target: @myself)}
+            >
+              Remove
+            </span>
+          </:action>
         </.form_table>
         <div class="flex flex-row gap-4 w-full justify-end">
           <.button phx-click={JS.push("add_char_eq_stat", target: @myself)}>

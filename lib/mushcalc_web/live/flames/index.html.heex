@@ -1,7 +1,7 @@
 
 
-<main :if={@user_id} class="grid grid-cols-3 gap-4 items-start">
-  <div class="col-span-3 flex justify-between  items-end">
+<main :if={@user_id} class="grid grid-cols-4 gap-4 items-start">
+  <div class="col-span-3 row-span-2 flex justify-between  items-end">
     <div class="flex flex-col gap-4">
       <.header>
         Flame Calculator
@@ -10,10 +10,10 @@
         This tool tries to answer "what should I flame next?". After entering
         your equipments' flames, it will show you:
       </p>
-      <ol class="list-decimal ml-6">
-        <li>How probable it is for you to roll a better flame</li>
+      <ol class="list-decimal ml-8">
+        <li>How probable it is for you to roll a better flame, with each flame</li>
         <li>What is the expected new score after rolling the new flame</li>
-        <li>A measure for return on investment on number of flames used</li>
+        <li>The return on investment: How much you expect to gain for each flame used</li>
       </ol>
       <p>
         It might take a while to load analytics if your stat equivalences and item levels are new,
@@ -27,18 +27,19 @@
         </a>
       </p>
     </div>
-
-    <.card title="Flame Type">
-      <form phx-change="set_flame">
-        <.input type="select" name="flame" options={@method_opts} value={to_string(@method)} />
-      </form>
-    </.card>
   </div>
 
   <.live_component
-    module={Character.Equivalences} equivs={@equivs} id="equivs" />
+  module={Character.Equivalences} equivs={@equivs} id="equivs" />
+  
+  <.card title="Flame Type">
+    <form phx-change="set_flame">
+      <.input type="select" name="flame" options={@method_opts} value={to_string(@method)} />
+    </form>
+  </.card>
 
-  <div class="col-span-2">
+
+  <div class="col-span-4">
   <.live_component
     module={FlamesLive.Equipment} equivs={@equivs} equips={@equips} id="eqs" />
   </div>

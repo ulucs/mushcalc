@@ -294,7 +294,7 @@ defmodule MushcalcWeb.CoreComponents do
 
     ~H"""
     <div phx-feedback-for={@name}>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+      <label class="flex items-center justify-center gap-4 text-sm leading-6 text-zinc-600">
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -573,7 +573,7 @@ defmodule MushcalcWeb.CoreComponents do
               </div>
             </div>
             <div :if={@action != []} class="relative w-14 p-0 table-cell">
-              <div class="relative whitespace-nowrap text-right text-sm font-medium">
+              <div class="relative flex justify-center whitespace-nowrap text-right text-sm font-medium">
                 <span class="absolute -right-2 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}

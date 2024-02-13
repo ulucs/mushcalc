@@ -11,7 +11,9 @@ defmodule Mushcalc.Flames.Pdf do
     field :item_type, Ecto.Enum, values: ~w(weapon armor)a
     field :item_level, :integer
     field :char_eqs, {:array, :float}
-    field :method, Ecto.Enum, values: ~w(powerful eternal)a
+
+    field :method, Ecto.Enum,
+      values: ~w(powerful eternal drop fusion master_fusion meister_fusion)a
 
     field :score, :float
     field :probability, :float
@@ -39,9 +41,10 @@ defmodule Mushcalc.Flames.Pdf do
     |> validate_required(@required_fields)
   end
 
-  def query(item_type, item_level, char_eqs, method) do
+  def query(item, char_eqs, method) do
     __MODULE__
-    |> where([f], f.item_type == ^item_type and f.item_level == ^item_level)
-    |> where([f], f.char_eqs == ^scoring_equiv_class(item_type, char_eqs) and f.method == ^method)
+    |> where([f], f.item_type == ^item.type and f.item_level == ^item.level)
+    |> where([f], f.item_advantage == ^item.advantage)
+    |> where([f], f.char_eqs == ^scoring_equiv_class(item.type, char_eqs) and f.method == ^method)
   end
 end

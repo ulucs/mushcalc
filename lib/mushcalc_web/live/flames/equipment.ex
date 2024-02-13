@@ -9,19 +9,18 @@ defmodule MushcalcWeb.FlamesLive.Equipment do
     Shoes: "shoes",
     Gloves: "gloves",
     Cape: "cape",
-    Shoulder: "shoulder",
     "Face Accessory": "face",
     "Eye Accessory": "eye",
     Earring: "ear",
     Pendant: "pendant",
-    Ring: "ring",
     Belt: "belt",
     Pocket: "pocket"
   ]
 
   @empty_eq %{
     "slot" => nil,
-    "level" => 150
+    "level" => 150,
+    "advantage" => true
   }
 
   @impl true
@@ -38,6 +37,13 @@ defmodule MushcalcWeb.FlamesLive.Equipment do
     case Integer.parse(val) do
       {v, _} -> v
       :error -> 150
+    end
+  end
+
+  defp parse_val(val, "advantage", _) do
+    case IO.inspect(val) do
+      "false" -> false
+      _ -> true
     end
   end
 
@@ -101,6 +107,9 @@ defmodule MushcalcWeb.FlamesLive.Equipment do
           <:col :let={{eqf, n}} label="Level">
             <.input type="number" id={"level_#{n}"} name="level" field={eqf[:level]} />
           </:col>
+          <:col :let={{eqf, n}} label="Advantage">
+            <.input type="checkbox" id={"advantage_#{n}"} name="advantage" field={eqf[:advantage]} />
+          </:col>
           <:col :let={{eqf, n}} :for={{stat, _} <- @equivs} label={stat}>
             <.input type="text" id={"flame_#{stat}_#{n}"} name={stat} field={eqf[stat]} />
           </:col>
@@ -108,13 +117,15 @@ defmodule MushcalcWeb.FlamesLive.Equipment do
             <%= calc_score(@equivs, eqf.source) %>
           </:col>
           <:col :let={{eqf, _}} label="Pr(Better)">
-            <%= eqf.source["results"] && Float.round(eqf.source["results"].probability * 100, 4) %>%
+            <%= eqf.source["results"][:probability] &&
+              Float.round(eqf.source["results"].probability * 100, 4) %>%
           </:col>
           <:col :let={{eqf, _}} label="Exp. Score">
-            <%= eqf.source["results"] && Float.round(eqf.source["results"].expected_score, 1) %>
+            <%= eqf.source["results"][:expected_score] &&
+              Float.round(eqf.source["results"].expected_score, 1) %>
           </:col>
           <:col :let={{eqf, _}} label="ROI">
-            <%= eqf.source["results"] && Float.round(eqf.source["results"].roi, 4) %>
+            <%= eqf.source["results"][:roi] && Float.round(eqf.source["results"].roi, 4) %>
           </:col>
         </.form_table>
         <div class="flex flex-row gap-4 w-full justify-end">
