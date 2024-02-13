@@ -1,8 +1,8 @@
 
 
 <main :if={@user_id} class="grid grid-cols-4 gap-4 items-start">
-  <div class="col-span-3 row-span-2 flex justify-between  items-end">
-    <div class="flex flex-col gap-4">
+  <div class="col-span-2 flex justify-between  items-end">
+    <.card>
       <.header>
         Flame Calculator
       </.header>
@@ -26,18 +26,18 @@
           Click to get a new start with a new user id.
         </a>
       </p>
-    </div>
+    </.card>
   </div>
 
-  <.live_component
-  module={Character.Equivalences} equivs={@equivs} id="equivs" />
-  
   <.card title="Flame Type">
     <form phx-change="set_flame">
       <.input type="select" name="flame" options={@method_opts} value={to_string(@method)} />
     </form>
   </.card>
 
+  <.live_component
+  module={Character.Equivalences} equivs={@equivs} id="equivs" />
+  
 
   <div class="col-span-4">
   <.live_component
