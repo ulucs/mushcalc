@@ -22,10 +22,10 @@ end
 
 if config_env() == :prod do
   for i in [
-        "DATABASE_NAME",
-        "DATABASE_USER",
-        "DATABASE_USER_PASSWORD",
-        "DATABASE_HOST"
+        "DATABASE_DATABASE",
+        "DATABASE_USERNAME",
+        "DATABASE_PASSWORD",
+        "DATABASE_HOSTNAME"
       ] do
     if System.get_env(i) == nil do
       raise "environment variable #{i} is missing."
@@ -35,10 +35,10 @@ if config_env() == :prod do
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :mushcalc, Mushcalc.Repo,
-    database: System.get_env("DATABASE_NAME"),
-    hostname: System.get_env("DATABASE_HOST"),
-    password: System.get_env("DATABASE_USER_PASSWORD"),
-    username: System.get_env("DATABASE_USER"),
+    database: System.get_env("DATABASE_DATABASE"),
+    hostname: System.get_env("DATABASE_HOSTNAME"),
+    password: System.get_env("DATABASE_PASSWORD"),
+    username: System.get_env("DATABASE_USERNAME"),
     pool_size: String.to_integer(System.get_env("POOL_SIZE", "10")),
     port: String.to_integer(System.get_env("DATABASE_PORT", "5432")),
     ssl: System.get_env("DATABASE_SSL", "true") == "true",
@@ -49,7 +49,7 @@ if config_env() == :prod do
         cacerts: :public_key.cacerts_get(),
         versions: [:"tlsv1.3"],
         depth: 3,
-        server_name_indication: String.to_charlist(System.get_env("DATABASE_HOST")),
+        server_name_indication: String.to_charlist(System.get_env("DATABASE_HOSTNAME")),
         customize_hostname_check: [
           match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
         ]
