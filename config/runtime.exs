@@ -21,15 +21,17 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
-  for i <- [
-        "DATABASE_DATABASE",
-        "DATABASE_USERNAME",
-        "DATABASE_PASSWORD",
-        "DATABASE_HOSTNAME"
-      ] do
-    if System.get_env(i) == nil do
-      raise "environment variable #{i} is missing."
-    end
+  missing_envs =
+    [
+      "DATABASE_DATABASE",
+      "DATABASE_USERNAME",
+      "DATABASE_PASSWORD",
+      "DATABASE_HOSTNAME"
+    ]
+    |> Enum.filter(&(System.get_env(&1) == nil))
+
+  if missing_envs != [] do
+    raise "environment variables #{missing_envs |> Enum.join(", ")} are missing."
   end
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
@@ -46,8 +48,7 @@ if config_env() == :prod do
     ssl_opts:
       IO.inspect(
         verify: :verify_peer,
-        cacertfile: System.get_env("DATABASE_CA_CERT"),
-        verify_fun: &:ssl_verify_hostname.verify_fun/3
+        cacert: System.get_env("DATABASE_CA_CERT")
       )
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
