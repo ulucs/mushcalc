@@ -48,7 +48,7 @@ if config_env() == :prod do
     ssl_opts:
       IO.inspect(
         verify: :verify_peer,
-        cacerts: System.get_env("DATABASE_CA_CERT")
+        cacertfile: System.get_env("DATABASE_CA_CERT")
       )
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
