@@ -21,7 +21,7 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
-  for i in [
+  for i <- [
         "DATABASE_DATABASE",
         "DATABASE_USERNAME",
         "DATABASE_PASSWORD",
