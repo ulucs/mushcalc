@@ -46,13 +46,8 @@ if config_env() == :prod do
     ssl_opts:
       IO.inspect(
         verify: :verify_peer,
-        cacerts: :public_key.cacerts_get(),
-        versions: [:"tlsv1.3"],
-        depth: 3,
-        server_name_indication: String.to_charlist(System.get_env("DATABASE_HOSTNAME")),
-        customize_hostname_check: [
-          match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
-        ]
+        cacertfile: System.get_env("DATABASE_CA_CERT"),
+        verify_fun: &:ssl_verify_hostname.verify_fun/3
       )
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
